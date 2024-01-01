@@ -10,6 +10,19 @@ export class App extends Component {
     filter: '',
   };
 
+  componentDidMount() {
+    const contacts = JSON.parse(localStorage.getItem('contacts'));
+    if (contacts) {
+      this.setState({ contacts });
+    }
+  }
+
+  componentDidUpdate(prevState, prevProps) {
+    if (this.state.contacts !== prevState.contacts) {
+      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
+    }
+  }
+
   handleAddName = formData => {
     const hasDuplicates = this.state.contacts.some(
       profile => profile.name.toLowerCase() === formData.name.toLowerCase()
@@ -34,17 +47,6 @@ export class App extends Component {
       contacts: prevState.contacts.filter(contact => contact.id !== profileId),
     }));
   };
-
-  componentDidMount() {
-    const contacts = JSON.parse(localStorage.getItem('contacts')) ?? [];
-    this.setState({ contacts: contacts });
-  }
-
-  componentDidUpdate(prevState, prevProps) {
-    if (this.state.contacts !== prevState.contacts) {
-      localStorage.setItem('contacts', JSON.stringify(this.state.contacts));
-    }
-  }
 
   render() {
     const filterProfiles = this.state.contacts.filter(profile =>
